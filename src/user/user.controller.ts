@@ -61,8 +61,8 @@ export class UserController {
     if (res?.message === Messages.WrongOldPassword) {
       throw new HttpException(Messages.WrongOldPassword, HttpStatus.FORBIDDEN);
     }
-    if (res?.message === Messages.IncorrectData) {
-      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     if (res?.message === Messages.NotFound) {
       throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);

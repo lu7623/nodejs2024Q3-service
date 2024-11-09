@@ -5,27 +5,28 @@ import { Messages } from 'src/utils/messages';
 import { AlbumDto } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/createAlbum.dto';
 import { UpdateAlbumDto } from './dto/updateAlbum.dto';
+import { DataBase, dB } from 'src/database/db';
 
 @Injectable()
 export class AlbumService {
-  private readonly albums: AlbumDto[] = [];
+  private dB: DataBase = dB;
 
   create(album: CreateAlbumDto) {
     const { name, year, artistId } = album;
-    let newTrack = new AlbumDto(name, year, artistId);
-    this.albums.push(newTrack);
-    return serviceResponse({ error: false, data: newTrack });
+    let newAlbum = new AlbumDto(name, year, artistId);
+    this.dB.albums[newAlbum.id] = newAlbum;
+    return serviceResponse({ error: false, data: newAlbum });
   }
 
   getAllTracks(): AlbumDto[] {
-    return this.albums;
+    return Object.values(this.dB.albums);
   }
 
   getTrackById(id: string): ServiceResponse {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let album = this.albums.find((track) => track.id === id);
+    let album = this.dB.albums?.[id];
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -33,10 +34,10 @@ export class AlbumService {
   }
 
   update(id: string, dto: UpdateAlbumDto) {
-    let album = this.albums.find((album) => album.id === id);
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
+    let album = this.dB.albums?.[id];
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -50,11 +51,11 @@ export class AlbumService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let albumInd = this.albums.findIndex((user) => user.id === id);
-    if (albumInd === -1) {
+    let album = this.dB.albums?.[id];
+    if (!album) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    this.albums.splice(albumInd, 1);
+    delete this.dB.albums[id];
     return serviceResponse({ error: false });
   }
 }

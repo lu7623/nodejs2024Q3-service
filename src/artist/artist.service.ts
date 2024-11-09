@@ -5,26 +5,27 @@ import { Messages } from 'src/utils/messages';
 import { ArtistDto } from './dto/artist.dto';
 import { CreateArtistDto } from './dto/createArtist.dto';
 import { UpdateArtistDto } from './dto/updateArtist.dto';
+import { DataBase, dB } from 'src/database/db';
 
 @Injectable()
 export class ArtistService {
-  private readonly artists: ArtistDto[] = [];
+  private dB: DataBase = dB;
 
   create(artist: CreateArtistDto) {
-    let newTrack = new ArtistDto(artist.name, artist.grammy);
-    this.artists.push(newTrack);
-    return serviceResponse({ error: false, data: newTrack });
+    let newArtist = new ArtistDto(artist.name, artist.grammy);
+    this.dB.artists[newArtist.id] = newArtist;
+    return serviceResponse({ error: false, data: newArtist });
   }
 
   getAllArtists(): ArtistDto[] {
-    return this.artists;
+    return Object.values(this.dB.artists);
   }
 
   getArtistById(id: string): ServiceResponse {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let artist = this.artists.find((track) => track.id === id);
+    let artist = this.dB.artists?.[id];
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -32,10 +33,10 @@ export class ArtistService {
   }
 
   update(id: string, dto: UpdateArtistDto) {
-    let artist = this.artists.find((track) => track.id === id);
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
+    let artist = this.dB.artists?.[id];
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -49,11 +50,11 @@ export class ArtistService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let trackInd = this.artists.findIndex((user) => user.id === id);
-    if (trackInd === -1) {
+    let artist = this.dB.artists?.[id];
+    if (!artist) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    this.artists.splice(trackInd, 1);
+    delete this.dB.artists[id];
     return serviceResponse({ error: false });
   }
 }

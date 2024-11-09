@@ -6,26 +6,30 @@ import { ServiceResponse, serviceResponse } from 'src/utils/types';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
 import { userWithoutPassword } from 'src/utils/userWithoutPassword';
+import { DataBase, dB } from 'src/database/db';
 
 @Injectable()
 export class UserService {
-  private readonly users: UserDto[] = [];
+  private dB: DataBase = dB;
 
   create(user: CreateUserDto) {
     let newUser = new UserDto(user.login, user.password);
-    this.users.push(newUser);
-    return serviceResponse({ error: false, data: userWithoutPassword(newUser) });
+    this.dB.users[newUser.id] = newUser;
+    return serviceResponse({
+      error: false,
+      data: userWithoutPassword(newUser),
+    });
   }
 
   getAllUsers(): UserDto[] {
-    return this.users;
+    return Object.values(this.dB.users);
   }
 
   getUserById(id: string): ServiceResponse {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let user = this.users.find((user) => user.id === id);
+    let user = this.dB.users?.[id];
     if (!user) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -33,10 +37,10 @@ export class UserService {
   }
 
   update(id: string, dto: UpdateUserDto) {
-    let user = this.users.find((user) => user.id === id);
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
+    let user = this.dB.users?.[id];
     if (!user) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -54,11 +58,11 @@ export class UserService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let userInd = this.users.findIndex((user) => user.id === id);
-    if (userInd !== -1) {
-      this.users.splice(userInd, 1);
-      return serviceResponse({ error: false });
+    let user = this.dB.users?.[id];
+    if (!user) {
+      return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    return serviceResponse({ message: Messages.NotFound, error: true });
+    delete this.dB.users[id];
+    return serviceResponse({ error: false });
   }
 }

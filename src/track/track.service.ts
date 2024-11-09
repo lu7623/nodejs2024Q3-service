@@ -5,27 +5,28 @@ import { Messages } from 'src/utils/messages';
 import { TrackDto } from './dto/track.dto';
 import { CreateTrackDto } from './dto/createTrack.dto';
 import { UpdateTrackDto } from './dto/updateTrack.dto';
+import { DataBase, dB } from 'src/database/db';
 
 @Injectable()
 export class TrackService {
-  private readonly tracks: TrackDto[] = [];
+  private dB: DataBase = dB;
 
   create(track: CreateTrackDto) {
     const { name, duration, albumId, artistId } = track;
     let newTrack = new TrackDto(name, duration, artistId, albumId);
-    this.tracks.push(newTrack);
+    this.dB.tracks[newTrack.id] = newTrack;
     return serviceResponse({ error: false, data: newTrack });
   }
 
   getAllTracks(): TrackDto[] {
-    return this.tracks;
+    return Object.values(this.dB.tracks);
   }
 
   getTrackById(id: string): ServiceResponse {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let track = this.tracks.find((track) => track.id === id);
+    let track = this.dB.tracks?.[id];
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -33,10 +34,10 @@ export class TrackService {
   }
 
   update(id: string, dto: UpdateTrackDto) {
-    let track = this.tracks.find((track) => track.id === id);
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
+    let track = this.dB.tracks?.[id];
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -50,11 +51,11 @@ export class TrackService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let trackInd = this.tracks.findIndex((user) => user.id === id);
-    if (trackInd === -1) {
+    let track = this.dB.tracks?.[id];
+    if (!track) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    this.tracks.splice(trackInd, 1);
+    delete this.dB.artists[id];
     return serviceResponse({ error: false });
   }
 }

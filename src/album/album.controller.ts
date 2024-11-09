@@ -57,8 +57,8 @@ export class AlbumController {
   @Header('content-type', 'application/json')
   update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
     const res = this.albumService.update(id, dto);
-    if (res?.message === Messages.IncorrectData) {
-      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     if (res?.message === Messages.NotFound) {
       throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);

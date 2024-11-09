@@ -55,8 +55,8 @@ export class TrackController {
   @Header('content-type', 'application/json')
   update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
     const res = this.trackService.update(id, updateTrackDto);
-    if (res?.message === Messages.IncorrectData) {
-      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     if (res?.message === Messages.NotFound) {
       throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
