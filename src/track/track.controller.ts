@@ -11,37 +11,37 @@ import {
   HttpException,
   Header,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UserDto } from './dto/user.dto';
-import { UpdateUserDto } from './dto/updateUser.dto';
-import { Messages } from 'src/utils/messages';
 
-@Controller('user')
-export class UserController {
-  constructor(private userService: UserService) {}
+import { Messages } from 'src/utils/messages';
+import { TrackService } from './track.service';
+import { CreateTrackDto } from './dto/createTrack.dto';
+import { UpdateTrackDto } from './dto/updateTrack.dto';
+
+@Controller('track')
+export class TrackController {
+  constructor(private trackService: TrackService) {}
 
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createUserDto: CreateUserDto) {
-    if (!createUserDto.login || !createUserDto.password) {
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    if (!createTrackDto.name || !createTrackDto.duration) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.userService.create(createUserDto);
+    const res = this.trackService.create(createTrackDto);
     return res.data;
   }
 
   @Get()
   @Header('content-type', 'application/json')
   async getAllUsers() {
-    return this.userService.getAllUsers();
+    return this.trackService.getAllTracks();
   }
 
   @Get(':id')
   @Header('content-type', 'application/json')
   getPostById(@Param('id') id: string) {
-    const res = this.userService.getUserById(id);
+    const res = this.trackService.getTrackById(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -53,14 +53,8 @@ export class UserController {
 
   @Put(':id')
   @Header('content-type', 'application/json')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    if (!updateUserDto.newPassword || !updateUserDto.oldPassword) {
-      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
-    }
-    const res = this.userService.update(id, updateUserDto);
-    if (res?.message === Messages.WrongOldPassword) {
-      throw new HttpException(Messages.WrongOldPassword, HttpStatus.FORBIDDEN);
-    }
+  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
+    const res = this.trackService.update(id, updateTrackDto);
     if (res?.message === Messages.IncorrectData) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
@@ -74,7 +68,7 @@ export class UserController {
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
-    const res = this.userService.remove(id);
+    const res = this.trackService.remove(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
