@@ -2,59 +2,58 @@ import { Injectable } from '@nestjs/common';
 import { ServiceResponse, serviceResponse } from 'src/utils/types';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
-import { TrackDto } from './dto/track.dto';
-import { CreateTrackDto } from './dto/createTrack.dto';
-import { UpdateTrackDto } from './dto/updateTrack.dto';
+import { ArtistDto } from './dto/artist.dto';
+import { CreateArtistDto } from './dto/createArtist.dto';
+import { UpdateArtistDto } from './dto/updateArtist.dto';
 
 @Injectable()
-export class TrackService {
-  private readonly tracks: TrackDto[] = [];
+export class ArtistService {
+  private readonly artists: ArtistDto[] = [];
 
-  create(track: CreateTrackDto) {
-    const { name, duration, albumId, artistId } = track;
-    let newTrack = new TrackDto(name, duration, artistId, albumId);
-    this.tracks.push(newTrack);
+  create(artist: CreateArtistDto) {
+    let newTrack = new ArtistDto(artist.name, artist.grammy);
+    this.artists.push(newTrack);
     return serviceResponse({ error: false, data: newTrack });
   }
 
-  getAllTracks(): TrackDto[] {
-    return this.tracks;
+  getAllArtists(): ArtistDto[] {
+    return this.artists;
   }
 
-  getTrackById(id: string): ServiceResponse {
+  getArtistById(id: string): ServiceResponse {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let track = this.tracks.find((track) => track.id === id);
-    if (!track) {
+    let artist = this.artists.find((track) => track.id === id);
+    if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    return serviceResponse({ error: false, data: track });
+    return serviceResponse({ error: false, data: artist });
   }
 
-  update(id: string, dto: UpdateTrackDto) {
-    let track = this.tracks.find((track) => track.id === id);
+  update(id: string, dto: UpdateArtistDto) {
+    let artist = this.artists.find((track) => track.id === id);
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    if (!track) {
+    if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
     for (let key in dto) {
-      track[key] = dto[key];
+      artist[key] = dto[key];
     }
-    return serviceResponse({ error: false, data: track });
+    return serviceResponse({ error: false, data: artist });
   }
 
   remove(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let trackInd = this.tracks.findIndex((user) => user.id === id);
+    let trackInd = this.artists.findIndex((user) => user.id === id);
     if (trackInd === -1) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    this.tracks.splice(trackInd, 1);
+    this.artists.splice(trackInd, 1);
     return serviceResponse({ error: false });
   }
 }
