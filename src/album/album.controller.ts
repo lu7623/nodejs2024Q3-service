@@ -16,6 +16,7 @@ import { Messages } from 'src/utils/messages';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/createAlbum.dto';
 import { UpdateAlbumDto } from './dto/updateAlbum.dto';
+import { isCreateAlbumDto, isUpdateAlbumDto } from 'src/utils/typeGuards';
 
 
 
@@ -27,7 +28,7 @@ export class AlbumController {
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateAlbumDto) {
-    if (!dto.name || !dto.year) {
+    if (!isCreateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
     const res = this.albumService.create(dto);
@@ -56,6 +57,9 @@ export class AlbumController {
   @Put(':id')
   @Header('content-type', 'application/json')
   update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
+    if (!isUpdateAlbumDto(dto)) {
+      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
+    }
     const res = this.albumService.update(id, dto);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);

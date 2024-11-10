@@ -16,6 +16,7 @@ import { Messages } from 'src/utils/messages';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/createTrack.dto';
 import { UpdateTrackDto } from './dto/updateTrack.dto';
+import { isCreateTrackDto, isUpdateTrackDto } from 'src/utils/typeGuards';
 
 @Controller('track')
 export class TrackController {
@@ -24,11 +25,11 @@ export class TrackController {
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createTrackDto: CreateTrackDto) {
-    if (!createTrackDto.name || !createTrackDto.duration) {
+  async create(@Body() dto: CreateTrackDto) {
+    if (!isCreateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.trackService.create(createTrackDto);
+    const res = this.trackService.create(dto);
     return res.data;
   }
 
@@ -53,8 +54,11 @@ export class TrackController {
 
   @Put(':id')
   @Header('content-type', 'application/json')
-  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    const res = this.trackService.update(id, updateTrackDto);
+  update(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
+    if (!isUpdateTrackDto(dto)) {
+      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
+    }
+    const res = this.trackService.update(id, dto);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }

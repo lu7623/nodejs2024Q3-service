@@ -11,7 +11,7 @@ export class UserDto {
         this.login = login;
         this.password = password;
         this.id = uuid();
-        this.version = 0;
+        this.version = 1;
         this.createdAt = Date.now();
         this.updatedAt = Date.now();
       }

@@ -55,7 +55,7 @@ export class TrackService {
     if (!track) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    delete this.dB.artists[id];
+    delete this.dB.tracks[id];
     return serviceResponse({ error: false });
   }
 }

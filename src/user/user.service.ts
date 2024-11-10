@@ -51,6 +51,8 @@ export class UserService {
       });
     }
     user.password = dto.newPassword;
+    user.version++;
+    user.updatedAt = Date.now();
     return serviceResponse({ error: false, data: userWithoutPassword(user) });
   }
 

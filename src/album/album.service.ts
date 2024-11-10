@@ -56,6 +56,7 @@ export class AlbumService {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
     delete this.dB.albums[id];
+    Object.values(this.dB.tracks).filter(track => track.albumId === id).forEach(track => track.albumId = null)
     return serviceResponse({ error: false });
   }
 }

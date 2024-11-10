@@ -16,6 +16,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { Messages } from 'src/utils/messages';
+import { isCreateUserDto, isUpdateUserDto } from 'src/utils/typeGuards';
 
 @Controller('user')
 export class UserController {
@@ -25,7 +26,7 @@ export class UserController {
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
-    if (!createUserDto.login || !createUserDto.password) {
+    if (!isCreateUserDto(createUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
     const res = this.userService.create(createUserDto);
@@ -54,7 +55,7 @@ export class UserController {
   @Put(':id')
   @Header('content-type', 'application/json')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    if (!updateUserDto.newPassword || !updateUserDto.oldPassword) {
+    if (!isUpdateUserDto(updateUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
     const res = this.userService.update(id, updateUserDto);

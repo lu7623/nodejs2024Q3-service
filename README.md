@@ -67,7 +67,6 @@ npm run format
 
 ## Endpoints: 
 
-1. For `Users`, `Artists`, `Albums`, `Tracks` and `Favorites` REST endpoints with separate router paths should be created
   * `Users` (`/user` route)
     * `GET /user` - get all users
     * `GET /user/:id` - get single user by id

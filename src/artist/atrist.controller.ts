@@ -16,6 +16,7 @@ import { Messages } from 'src/utils/messages';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/createArtist.dto';
 import { UpdateArtistDto } from './dto/updateArtist.dto';
+import { isCreateArtistDto, isUpdateArtistDto } from 'src/utils/typeGuards';
 
 @Controller('artist')
 export class ArtistController {
@@ -24,11 +25,11 @@ export class ArtistController {
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createArtistDto: CreateArtistDto) {
-    if (!createArtistDto.name || !createArtistDto.grammy) {
+  async create(@Body() dto: CreateArtistDto) {
+    if (!isCreateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.artistService.create(createArtistDto);
+    const res = this.artistService.create(dto);
     return res.data;
   }
 
@@ -53,8 +54,11 @@ export class ArtistController {
 
   @Put(':id')
   @Header('content-type', 'application/json')
-  update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    const res = this.artistService.update(id, updateArtistDto);
+  update(@Param('id') id: string, @Body() dto: UpdateArtistDto) {
+    if (!isUpdateArtistDto(dto)) {
+      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
+    }
+    const res = this.artistService.update(id, dto);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
