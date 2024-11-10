@@ -56,6 +56,7 @@ export class TrackService {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
     delete this.dB.tracks[id];
+    this.dB.favs.tracks.delete(id)
     return serviceResponse({ error: false });
   }
 }

@@ -57,6 +57,7 @@ export class ArtistService {
     delete this.dB.artists[id];
     Object.values(this.dB.tracks).filter(track => track.artistId === id).forEach(track => track.artistId = null);
     Object.values(this.dB.albums).filter(album => album.artistId === id).forEach(album => album.artistId = null)
+    this.dB.favs.artists.delete(id)
     return serviceResponse({ error: false });
   }
 }
