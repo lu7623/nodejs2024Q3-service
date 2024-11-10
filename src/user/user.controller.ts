@@ -13,10 +13,11 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
-import { UserDto } from './dto/user.dto';
+import { UserResp } from './dto/user.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { Messages } from 'src/utils/messages';
 import { isCreateUserDto, isUpdateUserDto } from 'src/utils/typeGuards';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
@@ -25,6 +26,14 @@ export class UserController {
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    type: UserResp,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Provided data format is incorrect'
+  })
   async create(@Body() createUserDto: CreateUserDto) {
     if (!isCreateUserDto(createUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -35,13 +44,29 @@ export class UserController {
 
   @Get()
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: [UserResp],
+  })
   async getAllUsers() {
     return this.userService.getAllUsers();
   }
 
   @Get(':id')
   @Header('content-type', 'application/json')
-  getPostById(@Param('id') id: string) {
+  @ApiResponse({
+    status: 200,
+    type: UserResp,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
+  getUserById(@Param('id') id: string) {
     const res = this.userService.getUserById(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
@@ -54,6 +79,18 @@ export class UserController {
 
   @Put(':id')
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: UserResp,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     if (!isUpdateUserDto(updateUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -74,6 +111,18 @@ export class UserController {
   @Delete(':id')
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted successfully'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
   remove(@Param('id') id: string) {
     const res = this.userService.remove(id);
     if (res?.message === Messages.WrongIdType) {

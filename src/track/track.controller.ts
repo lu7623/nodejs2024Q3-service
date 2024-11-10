@@ -17,6 +17,8 @@ import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/createTrack.dto';
 import { UpdateTrackDto } from './dto/updateTrack.dto';
 import { isCreateTrackDto, isUpdateTrackDto } from 'src/utils/typeGuards';
+import { ApiResponse } from '@nestjs/swagger';
+import { TrackDto } from './dto/track.dto';
 
 @Controller('track')
 export class TrackController {
@@ -25,6 +27,14 @@ export class TrackController {
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    type: TrackDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Provided data format is incorrect',
+  })
   async create(@Body() dto: CreateTrackDto) {
     if (!isCreateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -35,12 +45,28 @@ export class TrackController {
 
   @Get()
   @Header('content-type', 'application/json')
-  async getAllUsers() {
+  @ApiResponse({
+    status: 200,
+    type: [TrackDto],
+  })
+  async getAllTracks() {
     return this.trackService.getAllTracks();
   }
 
   @Get(':id')
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: TrackDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
   getPostById(@Param('id') id: string) {
     const res = this.trackService.getTrackById(id);
     if (res?.message === Messages.WrongIdType) {
@@ -54,6 +80,18 @@ export class TrackController {
 
   @Put(':id')
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: TrackDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
   update(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
     if (!isUpdateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -71,6 +109,18 @@ export class TrackController {
   @Delete(':id')
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
   remove(@Param('id') id: string) {
     const res = this.trackService.remove(id);
     if (res?.message === Messages.WrongIdType) {

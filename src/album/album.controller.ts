@@ -17,6 +17,8 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/createAlbum.dto';
 import { UpdateAlbumDto } from './dto/updateAlbum.dto';
 import { isCreateAlbumDto, isUpdateAlbumDto } from 'src/utils/typeGuards';
+import { ApiResponse } from '@nestjs/swagger';
+import { AlbumDto } from './dto/album.dto';
 
 
 
@@ -27,6 +29,14 @@ export class AlbumController {
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    type: AlbumDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Provided data format is incorrect'
+  })
   async create(@Body() dto: CreateAlbumDto) {
     if (!isCreateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -37,14 +47,30 @@ export class AlbumController {
 
   @Get()
   @Header('content-type', 'application/json')
-  async getAllUsers() {
-    return this.albumService.getAllTracks();
+  @ApiResponse({
+    status: 200,
+    type: [AlbumDto],
+  })
+  async getAllAlbums() {
+    return this.albumService.getAllAlbums();
   }
 
   @Get(':id')
   @Header('content-type', 'application/json')
-  getPostById(@Param('id') id: string) {
-    const res = this.albumService.getTrackById(id);
+  @ApiResponse({
+    status: 200,
+    type: AlbumDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
+  getAlbumById(@Param('id') id: string) {
+    const res = this.albumService.getAlbumById(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -56,6 +82,22 @@ export class AlbumController {
 
   @Put(':id')
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: AlbumDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Provided data format is incorrect'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
   update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
     if (!isUpdateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -73,6 +115,18 @@ export class AlbumController {
   @Delete(':id')
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted successfully'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
   remove(@Param('id') id: string) {
     const res = this.albumService.remove(id);
     if (res?.message === Messages.WrongIdType) {

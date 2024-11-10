@@ -18,11 +18,11 @@ export class AlbumService {
     return serviceResponse({ error: false, data: newAlbum });
   }
 
-  getAllTracks(): AlbumDto[] {
+  getAllAlbums(): AlbumDto[] {
     return Object.values(this.dB.albums);
   }
 
-  getTrackById(id: string): ServiceResponse {
+  getAlbumById(id: string): ServiceResponse {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }

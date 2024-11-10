@@ -17,6 +17,8 @@ import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/createArtist.dto';
 import { UpdateArtistDto } from './dto/updateArtist.dto';
 import { isCreateArtistDto, isUpdateArtistDto } from 'src/utils/typeGuards';
+import { ApiResponse } from '@nestjs/swagger';
+import { ArtistDto } from './dto/artist.dto';
 
 @Controller('artist')
 export class ArtistController {
@@ -25,6 +27,14 @@ export class ArtistController {
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    type: ArtistDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Provided data format is incorrect'
+  })
   async create(@Body() dto: CreateArtistDto) {
     if (!isCreateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -35,12 +45,28 @@ export class ArtistController {
 
   @Get()
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: [ArtistDto],
+  })
   async getAllArtists() {
     return this.artistService.getAllArtists();
   }
 
   @Get(':id')
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: ArtistDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
   getArtistById(@Param('id') id: string) {
     const res = this.artistService.getArtistById(id);
     if (res?.message === Messages.WrongIdType) {
@@ -54,6 +80,18 @@ export class ArtistController {
 
   @Put(':id')
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    type: ArtistDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
   update(@Param('id') id: string, @Body() dto: UpdateArtistDto) {
     if (!isUpdateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -71,6 +109,18 @@ export class ArtistController {
   @Delete(':id')
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted successfully'
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type'
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found'
+  })
   remove(@Param('id') id: string) {
     const res = this.artistService.remove(id);
     if (res?.message === Messages.WrongIdType) {
