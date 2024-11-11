@@ -6,7 +6,7 @@ export class AlbumDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ example: '58423dc6-d6ff-4e5e-bf96-e30a9642390d' })
-  id: string; 
+  id: string;
 
   @IsNotEmpty()
   @IsString()
@@ -21,12 +21,8 @@ export class AlbumDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ example: '58423dc6-d6ff-4e5e-bf96-e30a9642390d' })
-  artistId: string | null; 
-  constructor(
-    name: string,
-    year: number,
-    artistId?: string,
-  ) {
+  artistId: string | null;
+  constructor(name: string, year: number, artistId?: string) {
     this.id = uuid();
     this.name = name;
     this.artistId = artistId || null;

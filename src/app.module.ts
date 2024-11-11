@@ -6,6 +6,6 @@ import { AlbumModule } from './album/album.module';
 import { FavModule } from './favs/fav.module';
 
 @Module({
-  imports: [UserModule, TrackModule, ArtistModule, AlbumModule, FavModule]
+  imports: [UserModule, TrackModule, ArtistModule, AlbumModule, FavModule],
 })
 export class AppModule {}

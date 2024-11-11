@@ -20,8 +20,6 @@ import { isCreateAlbumDto, isUpdateAlbumDto } from 'src/utils/typeGuards';
 import { ApiResponse } from '@nestjs/swagger';
 import { AlbumDto } from './dto/album.dto';
 
-
-
 @Controller('album')
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
@@ -35,7 +33,7 @@ export class AlbumController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Provided data format is incorrect'
+    description: 'Provided data format is incorrect',
   })
   async create(@Body() dto: CreateAlbumDto) {
     if (!isCreateAlbumDto(dto)) {
@@ -63,11 +61,11 @@ export class AlbumController {
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   getAlbumById(@Param('id') id: string) {
     const res = this.albumService.getAlbumById(id);
@@ -88,15 +86,15 @@ export class AlbumController {
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 400,
-    description: 'Provided data format is incorrect'
+    description: 'Provided data format is incorrect',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
     if (!isUpdateAlbumDto(dto)) {
@@ -117,15 +115,15 @@ export class AlbumController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: 204,
-    description: 'Deleted successfully'
+    description: 'Deleted successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   remove(@Param('id') id: string) {
     const res = this.albumService.remove(id);

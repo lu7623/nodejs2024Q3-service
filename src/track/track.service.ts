@@ -13,7 +13,7 @@ export class TrackService {
 
   create(track: CreateTrackDto) {
     const { name, duration, albumId, artistId } = track;
-    let newTrack = new TrackDto(name, duration, artistId, albumId);
+    const newTrack = new TrackDto(name, duration, artistId, albumId);
     this.dB.tracks[newTrack.id] = newTrack;
     return serviceResponse({ error: false, data: newTrack });
   }
@@ -26,7 +26,7 @@ export class TrackService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let track = this.dB.tracks?.[id];
+    const track = this.dB.tracks?.[id];
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -37,11 +37,11 @@ export class TrackService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let track = this.dB.tracks?.[id];
+    const track = this.dB.tracks?.[id];
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    for (let key in dto) {
+    for (const key in dto) {
       track[key] = dto[key];
     }
     return serviceResponse({ error: false, data: track });
@@ -51,12 +51,12 @@ export class TrackService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let track = this.dB.tracks?.[id];
+    const track = this.dB.tracks?.[id];
     if (!track) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
     delete this.dB.tracks[id];
-    this.dB.favs.tracks.delete(id)
+    this.dB.favs.tracks.delete(id);
     return serviceResponse({ error: false });
   }
 }

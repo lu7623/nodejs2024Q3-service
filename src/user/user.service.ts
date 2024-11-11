@@ -13,7 +13,7 @@ export class UserService {
   private dB: DataBase = dB;
 
   create(user: CreateUserDto) {
-    let newUser = new UserDto(user.login, user.password);
+    const newUser = new UserDto(user.login, user.password);
     this.dB.users[newUser.id] = newUser;
     return serviceResponse({
       error: false,
@@ -29,7 +29,7 @@ export class UserService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let user = this.dB.users?.[id];
+    const user = this.dB.users?.[id];
     if (!user) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -40,7 +40,7 @@ export class UserService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let user = this.dB.users?.[id];
+    const user = this.dB.users?.[id];
     if (!user) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -60,7 +60,7 @@ export class UserService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let user = this.dB.users?.[id];
+    const user = this.dB.users?.[id];
     if (!user) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }

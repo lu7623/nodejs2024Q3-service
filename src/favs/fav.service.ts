@@ -17,7 +17,7 @@ export class FavService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let album = this.dB.albums?.[id];
+    const album = this.dB.albums?.[id];
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -29,7 +29,7 @@ export class FavService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let album = this.dB.albums?.[id];
+    const album = this.dB.albums?.[id];
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -41,7 +41,7 @@ export class FavService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let artist = this.dB.artists?.[id];
+    const artist = this.dB.artists?.[id];
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -53,7 +53,7 @@ export class FavService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let artist = this.dB.artists?.[id];
+    const artist = this.dB.artists?.[id];
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -65,7 +65,7 @@ export class FavService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let track = this.dB.tracks?.[id];
+    const track = this.dB.tracks?.[id];
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -77,7 +77,7 @@ export class FavService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let track = this.dB.tracks?.[id];
+    const track = this.dB.tracks?.[id];
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }

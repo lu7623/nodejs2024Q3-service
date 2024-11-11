@@ -29,15 +29,15 @@ export class FavController {
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({
     status: 201,
-    description: 'Added successfully'
+    description: 'Added successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   async createFavAlbum(@Param('id') id: string) {
     const res = this.favoritesService.createFavAlbum(id);
@@ -57,15 +57,15 @@ export class FavController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: 204,
-    description: 'Deleted successfully'
+    description: 'Deleted successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   async deleteFavAlbum(@Param('id') id: string) {
     const res = this.favoritesService.deleteFavAlbum(id);
@@ -85,15 +85,15 @@ export class FavController {
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({
     status: 201,
-    description: 'Added successfully'
+    description: 'Added successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   async createFavArtist(@Param('id') id: string) {
     const res = this.favoritesService.createFavArtist(id);
@@ -113,15 +113,15 @@ export class FavController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: 204,
-    description: 'Deleted successfully'
+    description: 'Deleted successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   async deleteFavArtist(@Param('id') id: string) {
     const res = this.favoritesService.deleteFavArtist(id);
@@ -141,15 +141,15 @@ export class FavController {
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({
     status: 201,
-    description: 'Added successfully'
+    description: 'Added successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   async createFavTrack(@Param('id') id: string) {
     const res = this.favoritesService.createFavTrack(id);
@@ -169,15 +169,15 @@ export class FavController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: 204,
-    description: 'Deleted successfully'
+    description: 'Deleted successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   async deleteFavTrack(@Param('id') id: string) {
     const res = this.favoritesService.deleteFavTrack(id);

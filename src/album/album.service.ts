@@ -13,7 +13,7 @@ export class AlbumService {
 
   create(album: CreateAlbumDto) {
     const { name, year, artistId } = album;
-    let newAlbum = new AlbumDto(name, year, artistId);
+    const newAlbum = new AlbumDto(name, year, artistId);
     this.dB.albums[newAlbum.id] = newAlbum;
     return serviceResponse({ error: false, data: newAlbum });
   }
@@ -26,7 +26,7 @@ export class AlbumService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let album = this.dB.albums?.[id];
+    const album = this.dB.albums?.[id];
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -37,11 +37,11 @@ export class AlbumService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let album = this.dB.albums?.[id];
+    const album = this.dB.albums?.[id];
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    for (let key in dto) {
+    for (const key in dto) {
       album[key] = dto[key];
     }
     return serviceResponse({ error: false, data: album });
@@ -51,13 +51,15 @@ export class AlbumService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let album = this.dB.albums?.[id];
+    const album = this.dB.albums?.[id];
     if (!album) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
     delete this.dB.albums[id];
-    Object.values(this.dB.tracks).filter(track => track.albumId === id).forEach(track => track.albumId = null);
-    this.dB.favs.albums.delete(id)
+    Object.values(this.dB.tracks)
+      .filter((track) => track.albumId === id)
+      .forEach((track) => (track.albumId = null));
+    this.dB.favs.albums.delete(id);
     return serviceResponse({ error: false });
   }
 }

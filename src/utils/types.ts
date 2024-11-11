@@ -1,9 +1,9 @@
-import { Messages } from "./messages"
+import { Messages } from './messages';
 
 export type ServiceResponse = {
-    data?: unknown,
-    message?: Messages,
-    error: boolean
-}
+  data?: unknown;
+  message?: Messages;
+  error: boolean;
+};
 
-export const serviceResponse=(res:ServiceResponse) => res
+export const serviceResponse = (res: ServiceResponse) => res;

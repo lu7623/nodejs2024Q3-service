@@ -32,7 +32,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Provided data format is incorrect'
+    description: 'Provided data format is incorrect',
   })
   async create(@Body() createUserDto: CreateUserDto) {
     if (!isCreateUserDto(createUserDto)) {
@@ -60,11 +60,11 @@ export class UserController {
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   getUserById(@Param('id') id: string) {
     const res = this.userService.getUserById(id);
@@ -85,11 +85,11 @@ export class UserController {
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     if (!isUpdateUserDto(updateUserDto)) {
@@ -113,15 +113,15 @@ export class UserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: 204,
-    description: 'Deleted successfully'
+    description: 'Deleted successfully',
   })
   @ApiResponse({
     status: 400,
-    description: 'This id is not of UUID type'
+    description: 'This id is not of UUID type',
   })
   @ApiResponse({
     status: 404,
-    description: 'Not found'
+    description: 'Not found',
   })
   remove(@Param('id') id: string) {
     const res = this.userService.remove(id);

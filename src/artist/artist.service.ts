@@ -12,7 +12,7 @@ export class ArtistService {
   private dB: DataBase = dB;
 
   create(artist: CreateArtistDto) {
-    let newArtist = new ArtistDto(artist.name, artist.grammy);
+    const newArtist = new ArtistDto(artist.name, artist.grammy);
     this.dB.artists[newArtist.id] = newArtist;
     return serviceResponse({ error: false, data: newArtist });
   }
@@ -25,7 +25,7 @@ export class ArtistService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let artist = this.dB.artists?.[id];
+    const artist = this.dB.artists?.[id];
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -36,11 +36,11 @@ export class ArtistService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let artist = this.dB.artists?.[id];
+    const artist = this.dB.artists?.[id];
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    for (let key in dto) {
+    for (const key in dto) {
       artist[key] = dto[key];
     }
     return serviceResponse({ error: false, data: artist });
@@ -50,14 +50,18 @@ export class ArtistService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    let artist = this.dB.artists?.[id];
+    const artist = this.dB.artists?.[id];
     if (!artist) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
     delete this.dB.artists[id];
-    Object.values(this.dB.tracks).filter(track => track.artistId === id).forEach(track => track.artistId = null);
-    Object.values(this.dB.albums).filter(album => album.artistId === id).forEach(album => album.artistId = null)
-    this.dB.favs.artists.delete(id)
+    Object.values(this.dB.tracks)
+      .filter((track) => track.artistId === id)
+      .forEach((track) => (track.artistId = null));
+    Object.values(this.dB.albums)
+      .filter((album) => album.artistId === id)
+      .forEach((album) => (album.artistId = null));
+    this.dB.favs.artists.delete(id);
     return serviceResponse({ error: false });
   }
 }

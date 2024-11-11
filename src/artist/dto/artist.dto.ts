@@ -6,7 +6,7 @@ export class ArtistDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ example: '58423dc6-d6ff-4e5e-bf96-e30a9642390d' })
-  id: string; 
+  id: string;
 
   @IsNotEmpty()
   @IsString()

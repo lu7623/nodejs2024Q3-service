@@ -16,13 +16,13 @@ export interface DataBase {
 }
 
 export const dB: DataBase = {
-    users: {},
-    tracks: {},
-    artists: {},
-    albums: {},
-    favs: {
-      albums: new Set(),
-      artists: new Set(),
-      tracks: new Set(),
-    },
-  };
+  users: {},
+  tracks: {},
+  artists: {},
+  albums: {},
+  favs: {
+    albums: new Set(),
+    artists: new Set(),
+    tracks: new Set(),
+  },
+};

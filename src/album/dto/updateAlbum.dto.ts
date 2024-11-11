@@ -15,6 +15,5 @@ export class UpdateAlbumDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ example: '58423dc6-d6ff-4e5e-bf96-e30a9642390d' })
-  artistId?: string; 
-  }
-  
+  artistId?: string;
+}

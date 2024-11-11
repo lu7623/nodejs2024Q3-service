@@ -1,5 +1,4 @@
-import { DataBase } from "src/database/db";
-
+import { DataBase } from 'src/database/db';
 
 export const parseFavorites = (dB: DataBase) => {
   const response = { albums: [], artists: [], tracks: [] };
