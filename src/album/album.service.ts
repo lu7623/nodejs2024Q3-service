@@ -5,11 +5,11 @@ import { Messages } from 'src/utils/messages';
 import { AlbumDto } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/createAlbum.dto';
 import { UpdateAlbumDto } from './dto/updateAlbum.dto';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  protected prisma = new PrismaClient();
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(album: CreateAlbumDto) {
     const { name, year, artistId } = album;
