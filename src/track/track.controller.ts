@@ -39,8 +39,7 @@ export class TrackController {
     if (!isCreateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.trackService.create(dto);
-    return res.data;
+    return await this.trackService.create(dto);
   }
 
   @Get()
@@ -50,7 +49,7 @@ export class TrackController {
     type: [TrackDto],
   })
   async getAllTracks() {
-    return this.trackService.getAllTracks();
+    return await this.trackService.getAllTracks();
   }
 
   @Get(':id')
@@ -67,8 +66,8 @@ export class TrackController {
     status: 404,
     description: 'Not found',
   })
-  getPostById(@Param('id') id: string) {
-    const res = this.trackService.getTrackById(id);
+  async getPostById(@Param('id') id: string) {
+    const res = await this.trackService.getTrackById(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -92,11 +91,11 @@ export class TrackController {
     status: 404,
     description: 'Not found',
   })
-  update(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
+  async update(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
     if (!isUpdateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.trackService.update(id, dto);
+    const res = await this.trackService.update(id, dto);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -121,8 +120,8 @@ export class TrackController {
     status: 404,
     description: 'Not found',
   })
-  remove(@Param('id') id: string) {
-    const res = this.trackService.remove(id);
+  async remove(@Param('id') id: string) {
+    const res = await this.trackService.remove(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }

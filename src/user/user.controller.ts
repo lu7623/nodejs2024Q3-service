@@ -38,7 +38,7 @@ export class UserController {
     if (!isCreateUserDto(createUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.userService.create(createUserDto);
+    const res = await this.userService.create(createUserDto);
     return res.data;
   }
 
@@ -66,8 +66,8 @@ export class UserController {
     status: 404,
     description: 'Not found',
   })
-  getUserById(@Param('id') id: string) {
-    const res = this.userService.getUserById(id);
+  async getUserById(@Param('id') id: string) {
+    const res = await this.userService.getUserById(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -91,11 +91,11 @@ export class UserController {
     status: 404,
     description: 'Not found',
   })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     if (!isUpdateUserDto(updateUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.userService.update(id, updateUserDto);
+    const res = await this.userService.update(id, updateUserDto);
     if (res?.message === Messages.WrongOldPassword) {
       throw new HttpException(Messages.WrongOldPassword, HttpStatus.FORBIDDEN);
     }
@@ -123,8 +123,8 @@ export class UserController {
     status: 404,
     description: 'Not found',
   })
-  remove(@Param('id') id: string) {
-    const res = this.userService.remove(id);
+  async remove(@Param('id') id: string) {
+    const res = await this.userService.remove(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
