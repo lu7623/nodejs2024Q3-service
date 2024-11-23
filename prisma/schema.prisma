@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./database.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(uuid())
   login     String
   password  String
-  version Int @default(1)
+  version   Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -41,7 +41,7 @@ model Track {
   duration Int
   artist   Artist?        @relation(fields: [artistId], references: [id], onDelete: SetNull)
   artistId String?
-  album    Album?         @relation(fields: [albumId], references: [id], onDelete: SetNull )
+  album    Album?         @relation(fields: [albumId], references: [id], onDelete: SetNull)
   albumId  String?
   favTrack FavoriteTrack?
 }
