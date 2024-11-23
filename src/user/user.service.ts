@@ -60,16 +60,16 @@ export class UserService {
         message: Messages.WrongOldPassword,
       });
     }
-    await this.prisma.user.update({
-      where: { id: id },
-      data: { password: dto.newPassword },
+    const res = await this.prisma.user.update({
+      where: { id },
+      data: { password: dto.newPassword, version: user.version + 1 },
     });
     return serviceResponse({
       error: false,
       data: userWithoutPassword({
-        ...user,
-        createdAt: user.createdAt.getTime(),
-        updatedAt: user.updatedAt.getTime(),
+        ...res,
+        createdAt: res.createdAt.getTime(),
+        updatedAt: res.updatedAt.getTime(),
       }),
     });
   }

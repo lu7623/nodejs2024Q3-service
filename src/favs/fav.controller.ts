@@ -40,7 +40,7 @@ export class FavController {
     description: 'Not found',
   })
   async createFavAlbum(@Param('id') id: string) {
-    const res = this.favoritesService.createFavAlbum(id);
+    const res = await this.favoritesService.createFavAlbum(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -68,7 +68,7 @@ export class FavController {
     description: 'Not found',
   })
   async deleteFavAlbum(@Param('id') id: string) {
-    const res = this.favoritesService.deleteFavAlbum(id);
+    const res = await this.favoritesService.deleteFavAlbum(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -96,7 +96,7 @@ export class FavController {
     description: 'Not found',
   })
   async createFavArtist(@Param('id') id: string) {
-    const res = this.favoritesService.createFavArtist(id);
+    const res = await this.favoritesService.createFavArtist(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -124,7 +124,7 @@ export class FavController {
     description: 'Not found',
   })
   async deleteFavArtist(@Param('id') id: string) {
-    const res = this.favoritesService.deleteFavArtist(id);
+    const res = await this.favoritesService.deleteFavArtist(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -152,7 +152,7 @@ export class FavController {
     description: 'Not found',
   })
   async createFavTrack(@Param('id') id: string) {
-    const res = this.favoritesService.createFavTrack(id);
+    const res = await this.favoritesService.createFavTrack(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -180,7 +180,7 @@ export class FavController {
     description: 'Not found',
   })
   async deleteFavTrack(@Param('id') id: string) {
-    const res = this.favoritesService.deleteFavTrack(id);
+    const res = await this.favoritesService.deleteFavTrack(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }

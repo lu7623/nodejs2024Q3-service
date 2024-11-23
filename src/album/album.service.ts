@@ -27,7 +27,7 @@ export class AlbumService {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
     const album = await this.prisma.album.findUnique({
-      where: { id: id },
+      where: { id },
     });
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
@@ -40,16 +40,16 @@ export class AlbumService {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
     const album = await this.prisma.album.findUnique({
-      where: { id: id },
+      where: { id },
     });
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    await this.prisma.album.update({
-      where: { id: id },
-      data: { ...album, ...dto },
+   const res = await this.prisma.album.update({
+      where: { id },
+      data: dto,
     });
-    return serviceResponse({ error: false, data: album });
+    return serviceResponse({ error: false, data: res });
   }
 
   async remove(id: string) {
@@ -57,14 +57,19 @@ export class AlbumService {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
     const album = await this.prisma.album.findUnique({
-      where: { id: id },
+      where: { id },
     });
     if (!album) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    this.prisma.album.delete({
-      where: { id: id },
+    await this.prisma.track.updateMany({
+      where: { albumId: id },
+      data: { albumId: null },
     });
+    await this.prisma.album.delete({
+      where: { id },
+    });
+
 
     return serviceResponse({ error: false });
   }

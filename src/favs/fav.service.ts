@@ -1,87 +1,123 @@
 import { Injectable } from '@nestjs/common';
-import { DataBase, dB } from 'src/database/db';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { Messages } from 'src/utils/messages';
-import { parseFavorites } from 'src/utils/parseFavorires';
-import { serviceResponse, ServiceResponse } from 'src/utils/types';
+import { serviceResponse } from 'src/utils/types';
 import { validate as uuidValidate } from 'uuid';
 
 @Injectable()
 export class FavService {
-  private dB: DataBase = dB;
+  constructor(private readonly prisma: PrismaService) {}
 
-  getAllFavs() {
-    return parseFavorites(dB);
+  async getAllFavs() {
+    const [favAlbums, favArtists, favTracks] = await Promise.all([
+      this.prisma.favoriteAlbum.findMany(),
+      this.prisma.favoriteArtist.findMany(),
+      this.prisma.favoriteTrack.findMany(),
+    ]);
+
+    const favAlbumsData = await Promise.all(
+      favAlbums.map(async (track) => {
+        return await this.prisma.album.findUnique({
+          where: { id: track.albumId },
+        });
+      }),
+    );
+    const favArtistsData = await Promise.all(
+      favArtists.map(async (artist) => {
+        return await this.prisma.artist.findUnique({
+          where: { id: artist.artistId },
+        });
+      }),
+    );
+    const favTracksData = await Promise.all(
+      favTracks.map(async (track) => {
+        return await this.prisma.track.findUnique({
+          where: { id: track.trackId },
+        });
+      }),
+    );
+    return {
+      albums: favAlbumsData,
+      tracks: favTracksData,
+      artists: favArtistsData,
+    };
   }
 
-  createFavAlbum(id: string): ServiceResponse {
+  async createFavAlbum(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const album = this.dB.albums?.[id];
+    const album = await this.prisma.album.findUnique({ where: { id } });
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    this.dB.favs.albums.add(id);
+   const fav =await this.prisma.favoriteAlbum.create({ data: { albumId: id } });
     return serviceResponse({ error: false });
   }
 
-  deleteFavAlbum(id: string): ServiceResponse {
+  async deleteFavAlbum(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const album = this.dB.albums?.[id];
+    const album = await this.prisma.favoriteAlbum.findUnique({
+      where: { albumId:id },
+    });
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    this.dB.favs.albums.delete(id);
+    await this.prisma.favoriteAlbum.delete({ where: { albumId: id } });
     return serviceResponse({ error: false });
   }
 
-  createFavArtist(id: string): ServiceResponse {
+  async createFavArtist(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const artist = this.dB.artists?.[id];
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    this.dB.favs.artists.add(id);
+   await this.prisma.favoriteArtist.create({ data: { artistId: artist.id } });
     return serviceResponse({ error: false });
   }
 
-  deleteFavArtist(id: string): ServiceResponse {
+  async deleteFavArtist(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const artist = this.dB.artists?.[id];
+    const artist = await this.prisma.favoriteArtist.findUnique({
+      where: { artistId: id },
+    });
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    this.dB.favs.artists.delete(id);
+    await this.prisma.favoriteArtist.delete({ where: { artistId: id } });
     return serviceResponse({ error: false });
   }
 
-  createFavTrack(id: string): ServiceResponse {
+  async createFavTrack(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const track = this.dB.tracks?.[id];
+    const track = await this.prisma.track.findUnique({ where: { id } });
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    this.dB.favs.tracks.add(id);
+    await this.prisma.favoriteTrack.create({ data: { trackId: track.id } });
     return serviceResponse({ error: false });
   }
 
-  deleteFavTrack(id: string): ServiceResponse {
+  async deleteFavTrack(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const track = this.dB.tracks?.[id];
+    const track = await this.prisma.favoriteTrack.findUnique({
+      where: { trackId: id },
+    });
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    this.dB.favs.tracks.delete(id);
+    await this.prisma.favoriteTrack.delete({ where: { trackId: id } });
     return serviceResponse({ error: false });
   }
 }

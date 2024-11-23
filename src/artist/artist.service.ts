@@ -25,7 +25,7 @@ export class ArtistService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const artist = await this.prisma.artist.findUnique({ where: { id: id } });
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -36,26 +36,35 @@ export class ArtistService {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const artist = await this.prisma.artist.findUnique({ where: { id: id } });
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    this.prisma.artist.update({
-      where: { id: id },
-      data: { ...artist, ...dto },
+    const res = await this.prisma.artist.update({
+      where: { id },
+      data: dto,
     });
-    return serviceResponse({ error: false, data: artist });
+    return serviceResponse({ error: false, data: res });
   }
 
   async remove(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const artist = await this.prisma.artist.findUnique({ where: { id: id } });
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    await this.prisma.artist.delete({ where: { id: id } });
+    await this.prisma.track.updateMany({
+      where: { artistId: id },
+      data: { artistId: null },
+    });
+   
+    await this.prisma.album.updateMany({
+      where: { artistId: id },
+      data: { artistId: null },
+    });
+    await this.prisma.artist.delete({ where: { id } });
 
     return serviceResponse({ error: false });
   }
