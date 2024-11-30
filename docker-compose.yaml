@@ -1,0 +1,35 @@
+services:
+  home-library:
+    build:
+      context: .
+    networks:
+      - network
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
+    develop:
+      watch: 
+        - path: ./src
+          action: rebuild
+  postgres:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    networks:
+      - network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+networks:
+  network:
+    driver: bridge
+volumes:
+  postgres:

@@ -1,46 +1,56 @@
 import { Injectable } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import { ServiceResponse, serviceResponse } from 'src/utils/types';
+import { serviceResponse } from 'src/utils/types';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
 import { userWithoutPassword } from 'src/utils/userWithoutPassword';
-import { DataBase, dB } from 'src/database/db';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  private dB: DataBase = dB;
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(user: CreateUserDto) {
-    const newUser = new UserDto(user.login, user.password);
-    this.dB.users[newUser.id] = newUser;
+  async create(user: CreateUserDto) {
+    const newUser = await this.prisma.user.create({ data: user });
     return serviceResponse({
       error: false,
-      data: userWithoutPassword(newUser),
+      data: userWithoutPassword({
+        ...newUser,
+        createdAt: newUser.createdAt.getTime(),
+        updatedAt: newUser.updatedAt.getTime(),
+      }),
     });
   }
 
-  getAllUsers(): UserDto[] {
-    return Object.values(this.dB.users);
+  async getAllUsers() {
+    const users = await this.prisma.user.findMany();
+    const data = users.map((user) =>
+      userWithoutPassword({
+        ...user,
+        createdAt: user.createdAt.getTime(),
+        updatedAt: user.updatedAt.getTime(),
+      }),
+    );
+    return data;
   }
 
-  getUserById(id: string): ServiceResponse {
+  async getUserById(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const user = this.dB.users?.[id];
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
     if (!user) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
     return serviceResponse({ error: false, data: user });
   }
 
-  update(id: string, dto: UpdateUserDto) {
+  async update(id: string, dto: UpdateUserDto) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const user = this.dB.users?.[id];
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
     if (!user) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
@@ -50,21 +60,29 @@ export class UserService {
         message: Messages.WrongOldPassword,
       });
     }
-    user.password = dto.newPassword;
-    user.version++;
-    user.updatedAt = Date.now();
-    return serviceResponse({ error: false, data: userWithoutPassword(user) });
+    const res = await this.prisma.user.update({
+      where: { id },
+      data: { password: dto.newPassword, version: user.version + 1 },
+    });
+    return serviceResponse({
+      error: false,
+      data: userWithoutPassword({
+        ...res,
+        createdAt: res.createdAt.getTime(),
+        updatedAt: res.updatedAt.getTime(),
+      }),
+    });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const user = this.dB.users?.[id];
+    const user = await this.prisma.user.findUnique({ where: { id: id } });
     if (!user) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    delete this.dB.users[id];
+    await this.prisma.user.delete({ where: { id: id } });
     return serviceResponse({ error: false });
   }
 }

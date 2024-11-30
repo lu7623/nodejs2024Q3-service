@@ -39,7 +39,7 @@ export class ArtistController {
     if (!isCreateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.artistService.create(dto);
+    const res = await this.artistService.create(dto);
     return res.data;
   }
 
@@ -50,7 +50,7 @@ export class ArtistController {
     type: [ArtistDto],
   })
   async getAllArtists() {
-    return this.artistService.getAllArtists();
+    return await this.artistService.getAllArtists();
   }
 
   @Get(':id')
@@ -67,8 +67,8 @@ export class ArtistController {
     status: 404,
     description: 'Not found',
   })
-  getArtistById(@Param('id') id: string) {
-    const res = this.artistService.getArtistById(id);
+  async getArtistById(@Param('id') id: string) {
+    const res = await this.artistService.getArtistById(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -92,11 +92,11 @@ export class ArtistController {
     status: 404,
     description: 'Not found',
   })
-  update(@Param('id') id: string, @Body() dto: UpdateArtistDto) {
+  async pdate(@Param('id') id: string, @Body() dto: UpdateArtistDto) {
     if (!isUpdateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.artistService.update(id, dto);
+    const res = await this.artistService.update(id, dto);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -121,8 +121,8 @@ export class ArtistController {
     status: 404,
     description: 'Not found',
   })
-  remove(@Param('id') id: string) {
-    const res = this.artistService.remove(id);
+  async remove(@Param('id') id: string) {
+    const res = await this.artistService.remove(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }

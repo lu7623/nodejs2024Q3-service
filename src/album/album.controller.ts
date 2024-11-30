@@ -39,7 +39,7 @@ export class AlbumController {
     if (!isCreateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.albumService.create(dto);
+    const res = await this.albumService.create(dto);
     return res.data;
   }
 
@@ -67,8 +67,8 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
-  getAlbumById(@Param('id') id: string) {
-    const res = this.albumService.getAlbumById(id);
+  async getAlbumById(@Param('id') id: string) {
+    const res = await this.albumService.getAlbumById(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -96,11 +96,11 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
-  update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
+  async update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
     if (!isUpdateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = this.albumService.update(id, dto);
+    const res = await this.albumService.update(id, dto);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
@@ -125,8 +125,8 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
-  remove(@Param('id') id: string) {
-    const res = this.albumService.remove(id);
+  async remove(@Param('id') id: string) {
+    const res = await this.albumService.remove(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }

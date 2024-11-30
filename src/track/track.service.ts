@@ -1,62 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { ServiceResponse, serviceResponse } from 'src/utils/types';
+import { serviceResponse } from 'src/utils/types';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
-import { TrackDto } from './dto/track.dto';
 import { CreateTrackDto } from './dto/createTrack.dto';
 import { UpdateTrackDto } from './dto/updateTrack.dto';
-import { DataBase, dB } from 'src/database/db';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TrackService {
-  private dB: DataBase = dB;
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(track: CreateTrackDto) {
-    const { name, duration, albumId, artistId } = track;
-    const newTrack = new TrackDto(name, duration, artistId, albumId);
-    this.dB.tracks[newTrack.id] = newTrack;
-    return serviceResponse({ error: false, data: newTrack });
+  async create(track: CreateTrackDto) {
+    return await this.prisma.track.create({ data: track });
   }
 
-  getAllTracks(): TrackDto[] {
-    return Object.values(this.dB.tracks);
+  async getAllTracks() {
+    return await this.prisma.track.findMany();
   }
 
-  getTrackById(id: string): ServiceResponse {
+  async getTrackById(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const track = this.dB.tracks?.[id];
+    const track = await this.prisma.track.findUnique({ where: { id: id } });
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
     return serviceResponse({ error: false, data: track });
   }
 
-  update(id: string, dto: UpdateTrackDto) {
+  async update(id: string, dto: UpdateTrackDto) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const track = this.dB.tracks?.[id];
+    const track = await this.prisma.track.findUnique({ where: { id: id } });
     if (!track) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    for (const key in dto) {
-      track[key] = dto[key];
-    }
+    await this.prisma.track.update({
+      where: { id: id },
+      data: {
+        ...track,
+        ...dto,
+      },
+    });
     return serviceResponse({ error: false, data: track });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const track = this.dB.tracks?.[id];
+    const track = await this.prisma.track.findUnique({ where: { id: id } });
     if (!track) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    delete this.dB.tracks[id];
-    this.dB.favs.tracks.delete(id);
+    await this.prisma.track.delete({ where: { id: id } });
     return serviceResponse({ error: false });
   }
 }

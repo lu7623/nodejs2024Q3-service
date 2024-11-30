@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 
@@ -12,11 +11,6 @@ export class UserResp {
   @IsString()
   @ApiProperty({ example: 'Anonimus' })
   login: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty({ example: 1 })
-  version: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -39,9 +33,5 @@ export class UserDto extends UserResp {
     super();
     this.login = login;
     this.password = password;
-    this.id = uuid();
-    this.version = 1;
-    this.createdAt = Date.now();
-    this.updatedAt = Date.now();
   }
 }

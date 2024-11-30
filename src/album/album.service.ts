@@ -1,65 +1,76 @@
 import { Injectable } from '@nestjs/common';
-import { ServiceResponse, serviceResponse } from 'src/utils/types';
+import { serviceResponse } from 'src/utils/types';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
 import { AlbumDto } from './dto/album.dto';
 import { CreateAlbumDto } from './dto/createAlbum.dto';
 import { UpdateAlbumDto } from './dto/updateAlbum.dto';
-import { DataBase, dB } from 'src/database/db';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  private dB: DataBase = dB;
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(album: CreateAlbumDto) {
+  async create(album: CreateAlbumDto) {
     const { name, year, artistId } = album;
     const newAlbum = new AlbumDto(name, year, artistId);
-    this.dB.albums[newAlbum.id] = newAlbum;
+    await this.prisma.album.create({ data: newAlbum });
     return serviceResponse({ error: false, data: newAlbum });
   }
 
-  getAllAlbums(): AlbumDto[] {
-    return Object.values(this.dB.albums);
+  async getAllAlbums() {
+    return await this.prisma.album.findMany();
   }
 
-  getAlbumById(id: string): ServiceResponse {
+  async getAlbumById(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const album = this.dB.albums?.[id];
+    const album = await this.prisma.album.findUnique({
+      where: { id },
+    });
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
     return serviceResponse({ error: false, data: album });
   }
 
-  update(id: string, dto: UpdateAlbumDto) {
+  async update(id: string, dto: UpdateAlbumDto) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const album = this.dB.albums?.[id];
+    const album = await this.prisma.album.findUnique({
+      where: { id },
+    });
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-    for (const key in dto) {
-      album[key] = dto[key];
-    }
-    return serviceResponse({ error: false, data: album });
+   const res = await this.prisma.album.update({
+      where: { id },
+      data: dto,
+    });
+    return serviceResponse({ error: false, data: res });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     if (!uuidValidate(id)) {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
-    const album = this.dB.albums?.[id];
+    const album = await this.prisma.album.findUnique({
+      where: { id },
+    });
     if (!album) {
       return serviceResponse({ message: Messages.NotFound, error: true });
     }
-    delete this.dB.albums[id];
-    Object.values(this.dB.tracks)
-      .filter((track) => track.albumId === id)
-      .forEach((track) => (track.albumId = null));
-    this.dB.favs.albums.delete(id);
+    await this.prisma.track.updateMany({
+      where: { albumId: id },
+      data: { albumId: null },
+    });
+    await this.prisma.album.delete({
+      where: { id },
+    });
+
+
     return serviceResponse({ error: false });
   }
 }
