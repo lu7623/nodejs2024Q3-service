@@ -1,0 +1,194 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  HttpException,
+  Header,
+} from '@nestjs/common';
+
+import { Messages } from 'src/utils/messages';
+import { FavService } from './fav.service';
+import { ApiResponse } from '@nestjs/swagger';
+
+@Controller('favs')
+export class FavController {
+  constructor(private favoritesService: FavService) {}
+
+  @Get()
+  @Header('content-type', 'application/json')
+  getAllTracks() {
+    return this.favoritesService.getAllFavs();
+  }
+
+  @Post('album/:id')
+  @Header('content-type', 'application/json')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    description: 'Added successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  async createFavAlbum(@Param('id') id: string) {
+    const res = this.favoritesService.createFavAlbum(id);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
+    }
+    if (res?.message === Messages.NotFound) {
+      throw new HttpException(
+        Messages.NotFound,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  @Delete('album/:id')
+  @Header('content-type', 'application/json')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  async deleteFavAlbum(@Param('id') id: string) {
+    const res = this.favoritesService.deleteFavAlbum(id);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
+    }
+    if (res?.message === Messages.NotFound) {
+      throw new HttpException(
+        Messages.NotFound,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  @Post('artist/:id')
+  @Header('content-type', 'application/json')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    description: 'Added successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  async createFavArtist(@Param('id') id: string) {
+    const res = this.favoritesService.createFavArtist(id);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
+    }
+    if (res?.message === Messages.NotFound) {
+      throw new HttpException(
+        Messages.NotFound,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  @Delete('artist/:id')
+  @Header('content-type', 'application/json')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  async deleteFavArtist(@Param('id') id: string) {
+    const res = this.favoritesService.deleteFavArtist(id);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
+    }
+    if (res?.message === Messages.NotFound) {
+      throw new HttpException(
+        Messages.NotFound,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  @Post('track/:id')
+  @Header('content-type', 'application/json')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    description: 'Added successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  async createFavTrack(@Param('id') id: string) {
+    const res = this.favoritesService.createFavTrack(id);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
+    }
+    if (res?.message === Messages.NotFound) {
+      throw new HttpException(
+        Messages.NotFound,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+
+  @Delete('track/:id')
+  @Header('content-type', 'application/json')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({
+    status: 204,
+    description: 'Deleted successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'This id is not of UUID type',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  async deleteFavTrack(@Param('id') id: string) {
+    const res = this.favoritesService.deleteFavTrack(id);
+    if (res?.message === Messages.WrongIdType) {
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
+    }
+    if (res?.message === Messages.NotFound) {
+      throw new HttpException(
+        Messages.NotFound,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+}
