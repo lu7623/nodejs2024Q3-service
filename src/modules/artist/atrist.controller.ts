@@ -35,6 +35,10 @@ export class ArtistController {
     status: 400,
     description: 'Provided data format is incorrect',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async create(@Body() dto: CreateArtistDto) {
     if (!isCreateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -48,6 +52,10 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     type: [ArtistDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getAllArtists() {
     return await this.artistService.getAllArtists();
@@ -66,6 +74,10 @@ export class ArtistController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getArtistById(@Param('id') id: string) {
     const res = await this.artistService.getArtistById(id);
@@ -91,6 +103,10 @@ export class ArtistController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async pdate(@Param('id') id: string, @Body() dto: UpdateArtistDto) {
     if (!isUpdateArtistDto(dto)) {
@@ -120,6 +136,10 @@ export class ArtistController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async remove(@Param('id') id: string) {
     const res = await this.artistService.remove(id);

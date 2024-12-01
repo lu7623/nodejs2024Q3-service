@@ -20,6 +20,14 @@ export class FavController {
 
   @Get()
   @Header('content-type', 'application/json')
+  @ApiResponse({
+    status: 200,
+    description: 'Ok',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   getAllTracks() {
     return this.favoritesService.getAllFavs();
   }
@@ -38,6 +46,10 @@ export class FavController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async createFavAlbum(@Param('id') id: string) {
     const res = await this.favoritesService.createFavAlbum(id);
@@ -67,6 +79,10 @@ export class FavController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async deleteFavAlbum(@Param('id') id: string) {
     const res = await this.favoritesService.deleteFavAlbum(id);
     if (res?.message === Messages.WrongIdType) {
@@ -94,6 +110,10 @@ export class FavController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async createFavArtist(@Param('id') id: string) {
     const res = await this.favoritesService.createFavArtist(id);
@@ -123,6 +143,10 @@ export class FavController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async deleteFavArtist(@Param('id') id: string) {
     const res = await this.favoritesService.deleteFavArtist(id);
     if (res?.message === Messages.WrongIdType) {
@@ -151,6 +175,10 @@ export class FavController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async createFavTrack(@Param('id') id: string) {
     const res = await this.favoritesService.createFavTrack(id);
     if (res?.message === Messages.WrongIdType) {
@@ -178,6 +206,10 @@ export class FavController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async deleteFavTrack(@Param('id') id: string) {
     const res = await this.favoritesService.deleteFavTrack(id);

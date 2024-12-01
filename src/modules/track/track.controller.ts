@@ -35,6 +35,10 @@ export class TrackController {
     status: 400,
     description: 'Provided data format is incorrect',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async create(@Body() dto: CreateTrackDto) {
     if (!isCreateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -47,6 +51,10 @@ export class TrackController {
   @ApiResponse({
     status: 200,
     type: [TrackDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getAllTracks() {
     return await this.trackService.getAllTracks();
@@ -65,6 +73,10 @@ export class TrackController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getPostById(@Param('id') id: string) {
     const res = await this.trackService.getTrackById(id);
@@ -90,6 +102,10 @@ export class TrackController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async update(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
     if (!isUpdateTrackDto(dto)) {
@@ -119,6 +135,10 @@ export class TrackController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async remove(@Param('id') id: string) {
     const res = await this.trackService.remove(id);

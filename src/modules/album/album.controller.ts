@@ -35,6 +35,10 @@ export class AlbumController {
     status: 400,
     description: 'Provided data format is incorrect',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async create(@Body() dto: CreateAlbumDto) {
     if (!isCreateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -48,6 +52,10 @@ export class AlbumController {
   @ApiResponse({
     status: 200,
     type: [AlbumDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getAllAlbums() {
     return this.albumService.getAllAlbums();
@@ -67,15 +75,12 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async getAlbumById(@Param('id') id: string) {
-    const res = await this.albumService.getAlbumById(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.albumService.getAlbumById(id);
   }
 
   @Put(':id')
@@ -96,18 +101,15 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
     if (!isUpdateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.albumService.update(id, dto);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.albumService.update(id, dto);
   }
 
   @Delete(':id')
@@ -125,13 +127,11 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async remove(@Param('id') id: string) {
-    const res = await this.albumService.remove(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
+    return await this.albumService.remove(id);
   }
 }
