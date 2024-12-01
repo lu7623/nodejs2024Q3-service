@@ -38,8 +38,7 @@ export class UserController {
     if (!isCreateUserDto(createUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.userService.create(createUserDto);
-    return res.data;
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
