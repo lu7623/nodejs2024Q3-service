@@ -59,7 +59,7 @@ export class ArtistService {
       where: { artistId: id },
       data: { artistId: null },
     });
-   
+
     await this.prisma.album.updateMany({
       where: { artistId: id },
       data: { artistId: null },

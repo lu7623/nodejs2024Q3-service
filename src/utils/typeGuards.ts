@@ -1,11 +1,11 @@
-import { CreateAlbumDto } from 'src/album/dto/createAlbum.dto';
-import { UpdateAlbumDto } from 'src/album/dto/updateAlbum.dto';
-import { CreateArtistDto } from 'src/artist/dto/createArtist.dto';
-import { UpdateArtistDto } from 'src/artist/dto/updateArtist.dto';
-import { CreateTrackDto } from 'src/track/dto/createTrack.dto';
-import { UpdateTrackDto } from 'src/track/dto/updateTrack.dto';
-import { CreateUserDto } from 'src/user/dto/createUser.dto';
-import { UpdateUserDto } from 'src/user/dto/updateUser.dto';
+import { CreateAlbumDto } from 'src/modules/album/dto/createAlbum.dto';
+import { UpdateAlbumDto } from 'src/modules/album/dto/updateAlbum.dto';
+import { CreateArtistDto } from 'src/modules/artist/dto/createArtist.dto';
+import { UpdateArtistDto } from 'src/modules/artist/dto/updateArtist.dto';
+import { CreateTrackDto } from 'src/modules/track/dto/createTrack.dto';
+import { UpdateTrackDto } from 'src/modules/track/dto/updateTrack.dto';
+import { CreateUserDto } from 'src/modules/user/dto/createUser.dto';
+import { UpdateUserDto } from 'src/modules/user/dto/updateUser.dto';
 
 export function isCreateUserDto(data: object): data is CreateUserDto {
   const checkData = data as CreateUserDto;

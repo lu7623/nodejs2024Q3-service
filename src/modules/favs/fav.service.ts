@@ -51,7 +51,9 @@ export class FavService {
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-   const fav =await this.prisma.favoriteAlbum.create({ data: { albumId: id } });
+    await this.prisma.favoriteAlbum.create({
+      data: { albumId: id },
+    });
     return serviceResponse({ error: false });
   }
 
@@ -60,7 +62,7 @@ export class FavService {
       return serviceResponse({ error: true, message: Messages.WrongIdType });
     }
     const album = await this.prisma.favoriteAlbum.findUnique({
-      where: { albumId:id },
+      where: { albumId: id },
     });
     if (!album) {
       return serviceResponse({ error: true, message: Messages.NotFound });
@@ -77,7 +79,7 @@ export class FavService {
     if (!artist) {
       return serviceResponse({ error: true, message: Messages.NotFound });
     }
-   await this.prisma.favoriteArtist.create({ data: { artistId: artist.id } });
+    await this.prisma.favoriteArtist.create({ data: { artistId: artist.id } });
     return serviceResponse({ error: false });
   }
 
