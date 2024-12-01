@@ -34,6 +34,10 @@ export class UserController {
     status: 400,
     description: 'Provided data format is incorrect',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async create(@Body() createUserDto: CreateUserDto) {
     if (!isCreateUserDto(createUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -46,6 +50,10 @@ export class UserController {
   @ApiResponse({
     status: 200,
     type: [UserResp],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getAllUsers() {
     return this.userService.getAllUsers();
@@ -64,6 +72,10 @@ export class UserController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getUserById(@Param('id') id: string) {
     const res = await this.userService.getUserById(id);
@@ -84,21 +96,15 @@ export class UserController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     if (!isUpdateUserDto(updateUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.userService.update(id, updateUserDto);
-    if (res?.message === Messages.WrongOldPassword) {
-      throw new HttpException(Messages.WrongOldPassword, HttpStatus.FORBIDDEN);
-    }
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
@@ -115,6 +121,10 @@ export class UserController {
   @ApiResponse({
     status: 404,
     description: 'Not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async remove(@Param('id') id: string) {
     const res = await this.userService.remove(id);

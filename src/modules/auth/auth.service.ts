@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -11,6 +13,7 @@ import { RefreshDto } from './dto/Refresh.dto';
 import { accessTokenConfig, refreshTokenConfig } from 'src/token/tokenConfig';
 import { Messages } from 'src/utils/messages';
 import { TokenPayload } from 'src/token/tokenPayload';
+import { validatePassword } from 'src/utils/passwordHash';
 
 @Injectable()
 export class AuthService {
@@ -21,8 +24,10 @@ export class AuthService {
 
   async signIn(dto: CredentialsDto) {
     const user = await this.usersService.getUserByLogin(dto.login);
-    if (user?.password !== dto.password) {
-      throw new UnauthorizedException(Messages.AlreadyExist);
+
+    const isValidPassword = await validatePassword(dto.password, user.password);
+    if (!isValidPassword) {
+      throw new HttpException(Messages.WrongOldPassword, HttpStatus.FORBIDDEN);
     }
     const payload: TokenPayload = { userId: user.id, login: user.login };
     return {
