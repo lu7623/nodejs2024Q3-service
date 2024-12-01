@@ -67,13 +67,7 @@ export class UserController {
   })
   async getUserById(@Param('id') id: string) {
     const res = await this.userService.getUserById(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return res;
   }
 
   @Put(':id')

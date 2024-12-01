@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { serviceResponse } from 'src/utils/types';
@@ -30,13 +30,13 @@ export class UserService {
 
   async getUserById(id: string) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     const user = await this.prisma.user.findUnique({ where: { id: id } });
     if (!user) {
-      return serviceResponse({ error: true, message: Messages.NotFound });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
-    return serviceResponse({ error: false, data: user });
+    return user;
   }
 
   async getUserByLogin(login: string) {

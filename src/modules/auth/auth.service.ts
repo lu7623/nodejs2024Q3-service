@@ -1,11 +1,16 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { CredentialsDto } from './dto/Credentials.dto';
+import { RefreshDto } from './dto/Refresh.dto';
+import { accessTokenConfig, refreshTokenConfig } from 'src/token/tokenConfig';
+import { Messages } from 'src/utils/messages';
+import { TokenPayload } from 'src/token/tokenPayload';
 
 @Injectable()
 export class AuthService {
@@ -14,14 +19,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(dto: CredentialsDto): Promise<{ access_token: string }> {
+  async signIn(dto: CredentialsDto) {
     const user = await this.usersService.getUserByLogin(dto.login);
     if (user?.password !== dto.password) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(Messages.AlreadyExist);
     }
-    const payload = { userId: user.id, login: user.login };
+    const payload: TokenPayload = { userId: user.id, login: user.login };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload, accessTokenConfig),
+      refreshToken: await this.jwtService.signAsync(
+        payload,
+        refreshTokenConfig,
+      ),
     };
   }
 
@@ -32,12 +41,45 @@ export class AuthService {
       throw new BadRequestException('User with this login already exists');
     }
     const newUser = await this.usersService.create(body);
-    const token = await this.jwtService.signAsync({
+    const payload: TokenPayload = {
       userId: newUser.id,
       login: newUser.login,
-    });
-    return {
-      access_token: token,
     };
+    return {
+      accessToken: await this.jwtService.signAsync(payload, accessTokenConfig),
+      refreshToken: await this.jwtService.signAsync(
+        payload,
+        refreshTokenConfig,
+      ),
+    };
+  }
+
+  async refresh(refreshToken: RefreshDto) {
+    if (!refreshToken.refreshToken) {
+      throw new UnauthorizedException('Old refresh token should be provided');
+    }
+    try {
+      const { userId } = await this.jwtService.verifyAsync(
+        refreshToken.refreshToken,
+        refreshTokenConfig,
+      );
+      const user = await this.usersService.getUserById(userId);
+      const updatedPayload: TokenPayload = {
+        userId: user.id,
+        login: user.login,
+      };
+      return {
+        accessToken: await this.jwtService.signAsync(
+          updatedPayload,
+          accessTokenConfig,
+        ),
+        refreshToken: await this.jwtService.signAsync(
+          updatedPayload,
+          refreshTokenConfig,
+        ),
+      };
+    } catch {
+      throw new ForbiddenException(Messages.InvalidRefreshToken);
+    }
   }
 }
