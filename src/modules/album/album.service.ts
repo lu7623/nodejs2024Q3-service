@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { serviceResponse } from 'src/utils/types';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
 import { AlbumDto } from './dto/album.dto';
@@ -14,8 +13,7 @@ export class AlbumService {
   async create(album: CreateAlbumDto) {
     const { name, year, artistId } = album;
     const newAlbum = new AlbumDto(name, year, artistId);
-    await this.prisma.album.create({ data: newAlbum });
-    return serviceResponse({ error: false, data: newAlbum });
+    return await this.prisma.album.create({ data: newAlbum });
   }
 
   async getAllAlbums() {

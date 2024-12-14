@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { serviceResponse } from 'src/utils/types';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
 import { ArtistDto } from './dto/artist.dto';
@@ -13,8 +12,7 @@ export class ArtistService {
 
   async create(artist: CreateArtistDto) {
     const newArtist = new ArtistDto(artist.name, artist.grammy);
-    await this.prisma.artist.create({ data: newArtist });
-    return serviceResponse({ error: false, data: newArtist });
+    return await this.prisma.artist.create({ data: newArtist });
   }
 
   async getAllArtists() {
@@ -23,37 +21,36 @@ export class ArtistService {
 
   async getArtistById(id: string) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
-      return serviceResponse({ error: true, message: Messages.NotFound });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
-    return serviceResponse({ error: false, data: artist });
+    return artist;
   }
 
   async update(id: string, dto: UpdateArtistDto) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
-      return serviceResponse({ error: true, message: Messages.NotFound });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
-    const res = await this.prisma.artist.update({
+    return await this.prisma.artist.update({
       where: { id },
       data: dto,
     });
-    return serviceResponse({ error: false, data: res });
   }
 
   async remove(id: string) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
-      return serviceResponse({ message: Messages.NotFound, error: true });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
     await this.prisma.track.updateMany({
       where: { artistId: id },
@@ -65,7 +62,6 @@ export class ArtistService {
       data: { artistId: null },
     });
     await this.prisma.artist.delete({ where: { id } });
-
-    return serviceResponse({ error: false });
+    return;
   }
 }

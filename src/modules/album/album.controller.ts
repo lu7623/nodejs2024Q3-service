@@ -43,8 +43,7 @@ export class AlbumController {
     if (!isCreateAlbumDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.albumService.create(dto);
-    return res.data;
+    return await this.albumService.create(dto);
   }
 
   @Get()

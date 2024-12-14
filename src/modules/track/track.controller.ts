@@ -79,14 +79,7 @@ export class TrackController {
     description: 'Unauthorized',
   })
   async getPostById(@Param('id') id: string) {
-    const res = await this.trackService.getTrackById(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.trackService.getTrackById(id);
   }
 
   @Put(':id')
@@ -111,14 +104,7 @@ export class TrackController {
     if (!isUpdateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.trackService.update(id, dto);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.trackService.update(id, dto);
   }
 
   @Delete(':id')
@@ -141,12 +127,6 @@ export class TrackController {
     description: 'Unauthorized',
   })
   async remove(@Param('id') id: string) {
-    const res = await this.trackService.remove(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
+    return await this.trackService.remove(id);
   }
 }

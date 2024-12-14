@@ -29,8 +29,9 @@ export class AuthService {
     if (!isValidPassword) {
       throw new HttpException(Messages.WrongOldPassword, HttpStatus.FORBIDDEN);
     }
-    const payload: TokenPayload = { userId: user.id, login: user.login };
+    const payload = { id: user.id, login: user.login };
     return {
+      ...payload,
       accessToken: await this.jwtService.signAsync(payload, accessTokenConfig),
       refreshToken: await this.jwtService.signAsync(
         payload,
@@ -46,11 +47,12 @@ export class AuthService {
       throw new BadRequestException('User with this login already exists');
     }
     const newUser = await this.usersService.create(body);
-    const payload: TokenPayload = {
-      userId: newUser.id,
+    const payload = {
+      id: newUser.id,
       login: newUser.login,
     };
     return {
+      ...payload,
       accessToken: await this.jwtService.signAsync(payload, accessTokenConfig),
       refreshToken: await this.jwtService.signAsync(
         payload,
@@ -64,11 +66,12 @@ export class AuthService {
       throw new UnauthorizedException('Old refresh token should be provided');
     }
     try {
-      const { userId } = await this.jwtService.verifyAsync(
+      const { id } = await this.jwtService.verifyAsync(
         refreshToken.refreshToken,
         refreshTokenConfig,
       );
-      const user = await this.usersService.getUserById(userId);
+
+      const user = await this.usersService.getUserById(id);
       const updatedPayload: TokenPayload = {
         userId: user.id,
         login: user.login,

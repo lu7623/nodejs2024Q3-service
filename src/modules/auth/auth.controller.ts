@@ -11,21 +11,21 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: CredentialsDto) {
-    return this.authService.signIn(signInDto);
+  async signIn(@Body() signInDto: CredentialsDto) {
+    return await this.authService.signIn(signInDto);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('signup')
-  signUp(@Body() signUpDto: CredentialsDto) {
-    return this.authService.signUp(signUpDto);
+  async signUp(@Body() signUpDto: CredentialsDto) {
+    return await this.authService.signUp(signUpDto);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
-  refresh(@Body() refreshDto: RefreshDto) {
-    return this.authService.refresh(refreshDto);
+  async refresh(@Body() refreshDto: RefreshDto) {
+    return await this.authService.refresh(refreshDto);
   }
 }

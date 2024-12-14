@@ -6,11 +6,9 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
-  HttpException,
   Header,
 } from '@nestjs/common';
 
-import { Messages } from 'src/utils/messages';
 import { FavService } from './fav.service';
 import { ApiResponse } from '@nestjs/swagger';
 
@@ -52,16 +50,7 @@ export class FavController {
     description: 'Unauthorized',
   })
   async createFavAlbum(@Param('id') id: string) {
-    const res = await this.favoritesService.createFavAlbum(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(
-        Messages.NotFound,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    return await this.favoritesService.createFavAlbum(id);
   }
 
   @Delete('album/:id')
@@ -84,16 +73,7 @@ export class FavController {
     description: 'Unauthorized',
   })
   async deleteFavAlbum(@Param('id') id: string) {
-    const res = await this.favoritesService.deleteFavAlbum(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(
-        Messages.NotFound,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    return await this.favoritesService.deleteFavAlbum(id);
   }
 
   @Post('artist/:id')
@@ -116,16 +96,7 @@ export class FavController {
     description: 'Unauthorized',
   })
   async createFavArtist(@Param('id') id: string) {
-    const res = await this.favoritesService.createFavArtist(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(
-        Messages.NotFound,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    return await this.favoritesService.createFavArtist(id);
   }
 
   @Delete('artist/:id')
@@ -148,16 +119,7 @@ export class FavController {
     description: 'Unauthorized',
   })
   async deleteFavArtist(@Param('id') id: string) {
-    const res = await this.favoritesService.deleteFavArtist(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(
-        Messages.NotFound,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    return await this.favoritesService.deleteFavArtist(id);
   }
 
   @Post('track/:id')
@@ -180,16 +142,7 @@ export class FavController {
     description: 'Unauthorized',
   })
   async createFavTrack(@Param('id') id: string) {
-    const res = await this.favoritesService.createFavTrack(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(
-        Messages.NotFound,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    return await this.favoritesService.createFavTrack(id);
   }
 
   @Delete('track/:id')
@@ -212,15 +165,6 @@ export class FavController {
     description: 'Unauthorized',
   })
   async deleteFavTrack(@Param('id') id: string) {
-    const res = await this.favoritesService.deleteFavTrack(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(
-        Messages.NotFound,
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    return await this.favoritesService.deleteFavTrack(id);
   }
 }

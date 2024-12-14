@@ -43,8 +43,7 @@ export class ArtistController {
     if (!isCreateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.artistService.create(dto);
-    return res.data;
+    return await this.artistService.create(dto);
   }
 
   @Get()
@@ -80,14 +79,7 @@ export class ArtistController {
     description: 'Unauthorized',
   })
   async getArtistById(@Param('id') id: string) {
-    const res = await this.artistService.getArtistById(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.artistService.getArtistById(id);
   }
 
   @Put(':id')
@@ -112,14 +104,7 @@ export class ArtistController {
     if (!isUpdateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.artistService.update(id, dto);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.artistService.update(id, dto);
   }
 
   @Delete(':id')
@@ -142,12 +127,6 @@ export class ArtistController {
     description: 'Unauthorized',
   })
   async remove(@Param('id') id: string) {
-    const res = await this.artistService.remove(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
+    return await this.artistService.remove(id);
   }
 }

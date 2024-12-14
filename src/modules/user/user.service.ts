@@ -16,7 +16,11 @@ export class UserService {
     const hashPassord = await generatePasswordHash(user.password);
     const data = { ...user, password: hashPassord };
     const newUser = await this.prisma.user.create({ data: data });
-    return newUser;
+    return userWithoutPassword({
+      ...newUser,
+      createdAt: newUser.createdAt.getTime(),
+      updatedAt: newUser.updatedAt.getTime(),
+    });
   }
 
   async getAllUsers() {
