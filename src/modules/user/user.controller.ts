@@ -11,53 +11,59 @@ import {
   HttpException,
   Header,
 } from '@nestjs/common';
-
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/createUser.dto';
+import { UserResp } from './dto/user.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 import { Messages } from 'src/utils/messages';
-import { AlbumService } from './album.service';
-import { CreateAlbumDto } from './dto/createAlbum.dto';
-import { UpdateAlbumDto } from './dto/updateAlbum.dto';
-import { isCreateAlbumDto, isUpdateAlbumDto } from 'src/utils/typeGuards';
+import { isCreateUserDto, isUpdateUserDto } from 'src/utils/typeGuards';
 import { ApiResponse } from '@nestjs/swagger';
-import { AlbumDto } from './dto/album.dto';
 
-@Controller('album')
-export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+@Controller('user')
+export class UserController {
+  constructor(private userService: UserService) {}
 
   @Post()
   @Header('content-type', 'application/json')
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({
     status: 201,
-    type: AlbumDto,
+    type: UserResp,
   })
   @ApiResponse({
     status: 400,
     description: 'Provided data format is incorrect',
   })
-  async create(@Body() dto: CreateAlbumDto) {
-    if (!isCreateAlbumDto(dto)) {
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  async create(@Body() createUserDto: CreateUserDto) {
+    if (!isCreateUserDto(createUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.albumService.create(dto);
-    return res.data;
+    return await this.userService.create(createUserDto);
   }
 
   @Get()
   @Header('content-type', 'application/json')
   @ApiResponse({
     status: 200,
-    type: [AlbumDto],
+    type: [UserResp],
   })
-  async getAllAlbums() {
-    return this.albumService.getAllAlbums();
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  async getAllUsers() {
+    return this.userService.getAllUsers();
   }
 
   @Get(':id')
   @Header('content-type', 'application/json')
   @ApiResponse({
     status: 200,
-    type: AlbumDto,
+    type: UserResp,
   })
   @ApiResponse({
     status: 400,
@@ -67,47 +73,38 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
-  async getAlbumById(@Param('id') id: string) {
-    const res = await this.albumService.getAlbumById(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  async getUserById(@Param('id') id: string) {
+    const res = await this.userService.getUserById(id);
+    return res;
   }
 
   @Put(':id')
   @Header('content-type', 'application/json')
   @ApiResponse({
     status: 200,
-    type: AlbumDto,
+    type: UserResp,
   })
   @ApiResponse({
     status: 400,
     description: 'This id is not of UUID type',
   })
   @ApiResponse({
-    status: 400,
-    description: 'Provided data format is incorrect',
-  })
-  @ApiResponse({
     status: 404,
     description: 'Not found',
   })
-  async update(@Param('id') id: string, @Body() dto: UpdateAlbumDto) {
-    if (!isUpdateAlbumDto(dto)) {
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    if (!isUpdateUserDto(updateUserDto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.albumService.update(id, dto);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
@@ -125,8 +122,12 @@ export class AlbumController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async remove(@Param('id') id: string) {
-    const res = await this.albumService.remove(id);
+    const res = await this.userService.remove(id);
     if (res?.message === Messages.WrongIdType) {
       throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }

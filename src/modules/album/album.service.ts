@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { serviceResponse } from 'src/utils/types';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
 import { AlbumDto } from './dto/album.dto';
@@ -14,8 +13,7 @@ export class AlbumService {
   async create(album: CreateAlbumDto) {
     const { name, year, artistId } = album;
     const newAlbum = new AlbumDto(name, year, artistId);
-    await this.prisma.album.create({ data: newAlbum });
-    return serviceResponse({ error: false, data: newAlbum });
+    return await this.prisma.album.create({ data: newAlbum });
   }
 
   async getAllAlbums() {
@@ -24,43 +22,42 @@ export class AlbumService {
 
   async getAlbumById(id: string) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     const album = await this.prisma.album.findUnique({
       where: { id },
     });
     if (!album) {
-      return serviceResponse({ error: true, message: Messages.NotFound });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
-    return serviceResponse({ error: false, data: album });
+    return album;
   }
 
   async update(id: string, dto: UpdateAlbumDto) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     const album = await this.prisma.album.findUnique({
       where: { id },
     });
     if (!album) {
-      return serviceResponse({ error: true, message: Messages.NotFound });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
-   const res = await this.prisma.album.update({
+    return await this.prisma.album.update({
       where: { id },
       data: dto,
     });
-    return serviceResponse({ error: false, data: res });
   }
 
   async remove(id: string) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
     }
     const album = await this.prisma.album.findUnique({
       where: { id },
     });
     if (!album) {
-      return serviceResponse({ message: Messages.NotFound, error: true });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
     await this.prisma.track.updateMany({
       where: { albumId: id },
@@ -69,8 +66,6 @@ export class AlbumService {
     await this.prisma.album.delete({
       where: { id },
     });
-
-
-    return serviceResponse({ error: false });
+    return;
   }
 }

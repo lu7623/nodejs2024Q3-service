@@ -35,6 +35,10 @@ export class TrackController {
     status: 400,
     description: 'Provided data format is incorrect',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async create(@Body() dto: CreateTrackDto) {
     if (!isCreateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
@@ -47,6 +51,10 @@ export class TrackController {
   @ApiResponse({
     status: 200,
     type: [TrackDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getAllTracks() {
     return await this.trackService.getAllTracks();
@@ -66,15 +74,12 @@ export class TrackController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async getPostById(@Param('id') id: string) {
-    const res = await this.trackService.getTrackById(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.trackService.getTrackById(id);
   }
 
   @Put(':id')
@@ -91,18 +96,15 @@ export class TrackController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async update(@Param('id') id: string, @Body() dto: UpdateTrackDto) {
     if (!isUpdateTrackDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.trackService.update(id, dto);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.trackService.update(id, dto);
   }
 
   @Delete(':id')
@@ -120,13 +122,11 @@ export class TrackController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async remove(@Param('id') id: string) {
-    const res = await this.trackService.remove(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
+    return await this.trackService.remove(id);
   }
 }

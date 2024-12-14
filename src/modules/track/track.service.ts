@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { serviceResponse } from 'src/utils/types';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { validate as uuidValidate } from 'uuid';
 import { Messages } from 'src/utils/messages';
 import { CreateTrackDto } from './dto/createTrack.dto';
@@ -20,42 +19,41 @@ export class TrackService {
 
   async getTrackById(id: string) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
     const track = await this.prisma.track.findUnique({ where: { id: id } });
     if (!track) {
-      return serviceResponse({ error: true, message: Messages.NotFound });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
-    return serviceResponse({ error: false, data: track });
+    return track;
   }
 
   async update(id: string, dto: UpdateTrackDto) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
     const track = await this.prisma.track.findUnique({ where: { id: id } });
     if (!track) {
-      return serviceResponse({ error: true, message: Messages.NotFound });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
-    await this.prisma.track.update({
+    return await this.prisma.track.update({
       where: { id: id },
       data: {
         ...track,
         ...dto,
       },
     });
-    return serviceResponse({ error: false, data: track });
   }
 
   async remove(id: string) {
     if (!uuidValidate(id)) {
-      return serviceResponse({ error: true, message: Messages.WrongIdType });
+      throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
     const track = await this.prisma.track.findUnique({ where: { id: id } });
     if (!track) {
-      return serviceResponse({ message: Messages.NotFound, error: true });
+      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
     }
     await this.prisma.track.delete({ where: { id: id } });
-    return serviceResponse({ error: false });
+    return;
   }
 }

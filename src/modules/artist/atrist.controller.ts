@@ -35,12 +35,15 @@ export class ArtistController {
     status: 400,
     description: 'Provided data format is incorrect',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async create(@Body() dto: CreateArtistDto) {
     if (!isCreateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.artistService.create(dto);
-    return res.data;
+    return await this.artistService.create(dto);
   }
 
   @Get()
@@ -48,6 +51,10 @@ export class ArtistController {
   @ApiResponse({
     status: 200,
     type: [ArtistDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   async getAllArtists() {
     return await this.artistService.getAllArtists();
@@ -67,15 +74,12 @@ export class ArtistController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async getArtistById(@Param('id') id: string) {
-    const res = await this.artistService.getArtistById(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.artistService.getArtistById(id);
   }
 
   @Put(':id')
@@ -92,18 +96,15 @@ export class ArtistController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async pdate(@Param('id') id: string, @Body() dto: UpdateArtistDto) {
     if (!isUpdateArtistDto(dto)) {
       throw new HttpException(Messages.IncorrectData, HttpStatus.BAD_REQUEST);
     }
-    const res = await this.artistService.update(id, dto);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
-    return res.data;
+    return await this.artistService.update(id, dto);
   }
 
   @Delete(':id')
@@ -121,13 +122,11 @@ export class ArtistController {
     status: 404,
     description: 'Not found',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
   async remove(@Param('id') id: string) {
-    const res = await this.artistService.remove(id);
-    if (res?.message === Messages.WrongIdType) {
-      throw new HttpException(Messages.WrongIdType, HttpStatus.BAD_REQUEST);
-    }
-    if (res?.message === Messages.NotFound) {
-      throw new HttpException(Messages.NotFound, HttpStatus.NOT_FOUND);
-    }
+    return await this.artistService.remove(id);
   }
 }
