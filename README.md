@@ -14,16 +14,15 @@ git clone {repository URL}
 ## Installing NPM modules
 
 ```
-npm install --legacy-peer-deps
+npm install
 ```
 
 ## Running application
 
 Create an .env file based on the .env.example file.
-Open Docker Desktop 
-Run Docker with the command: 
+Run command
 ```
-docker-compose up
+npm run start:dev
 ```
 After starting the app on port (4000 as default) you can open in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 
@@ -66,7 +65,20 @@ npm run format
 ```
 
 ## Endpoints: 
-
+  * `Signup` (`auth/signup` route)
+    * `POST auth/signup` - send `login` and `password` to create a new `user`
+      - Server should answer with `status code` **201** and corresponding message if dto is valid
+      - Server should answer with `status code` **400** and corresponding message if dto is invalid (no `login` or `password`, or they are not a `strings`)
+  * `Login` (`auth/login` route)
+    * `POST auth/login` - send `login` and `password` to get Access token and Refresh token (optionally)
+      - Server should answer with `status code` **200** and tokens if dto is valid
+      - Server should answer with `status code` **400** and corresponding message if dto is invalid (no `login` or `password`, or they are not a `strings`)
+      - Server should answer with `status code` **403** and corresponding message if authentication failed (no user with such `login`, `password` doesn't match actual one, etc.)
+  * `Refresh` (`auth/refresh` route)
+    * `POST auth/refresh` - send refresh token in body as `{ refreshToken }` to get new pair of Access token and Refresh token
+      - Server should answer with `status code` **200** and tokens in body if dto is valid
+      - Server should answer with `status code` **401** and corresponding message if dto is invalid (no `refreshToken` in body)
+      - Server should answer with `status code` **403** and corresponding message if authentication failed (Refresh token is invalid or expired)
   * `Users` (`/user` route)
     * `GET /user` - get all users
     * `GET /user/:id` - get single user by id
